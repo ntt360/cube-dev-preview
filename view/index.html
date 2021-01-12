@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>cube preview</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://s0.ssl.qhres.com/static/362cfbb9fe9ef830.css">
+  <base target="_blank">
+  <style>
+    #tips {display: none; text-align: center; font-size: 18px; line-height: 1.5;}
+  </style>
+  <!--[if IE]>
+    <style>
+      #tips{display: block}
+    </style>
+  <![endif]-->
+  <style>
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      #tips{display: block}
+    }
+  </style>
+</head>
+<body>
+  <div id="tips"> cube 开发者工具，暂不支持 IE 浏览器 <br> 推荐使用 Chrome 浏览器</div>
+  <div id="doc">
+  </div>
+  <div id="cube-temp"></div>
+  <script src="https://s0.ssl.qhres.com/static/07d9fa339655386f.js"></script>
+  <script type="module" src="/main.js"></script>
+  <script>
+    (function() {
+      const id = new URLSearchParams(window.location.search).get('id');
+      fetch('/get_info?id=' + id).then(async (resp) => {
+        const data = await resp.json();
+        console.log('cube data:', data);
+        /*
+        const { init, CoolBox } = CubeSdk;
+        let { systemData, cubeData: data } = CubeDevData;
+
+        systemData.userAgent += ' @cubetool/plugin-cli_plus';
+        init({
+          debug: true,
+          ...systemData,
+        });
+        const coolbox = new CoolBox({
+          data,
+          expanded: !!localStorage.getItem(`cube-${data.id}-expand`),
+          onExpand: function () {
+            localStorage.setItem(`cube-${data.id}-expand`, true);
+          },
+          onCollapse: function () {
+            localStorage.removeItem(`cube-${data.id}-expand`);
+          },
+        });
+        coolbox.insert('#cube-temp', 'top');
+        coolbox.trigger('show');
+        coolbox.trigger('completeshow');
+        */
+      });
+    })();
+  </script>
+</body>
+</html>

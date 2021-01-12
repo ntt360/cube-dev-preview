@@ -1,0 +1,85 @@
+[
+  {
+    "url": "https://www.google.com",
+    "name": "Google"
+  },
+  {
+    "url": "https://stackoverflow.com/",
+    "name": "StackOverflow"
+  },
+  {
+    "url": "https://github.com/",
+    "name": "GitHub"
+  },
+  {
+    "url": "https://developer.mozilla.org",
+    "name": "MDN"
+  },
+  {
+    "url": "https://nodejs.org/",
+    "name": "Node.js"
+  },
+  {
+    "url": "https://www.npmjs.com/",
+    "name": "NPM",
+    "icon": "https://static.npmjs.com/da3ab40fb0861d15c83854c29f5f2962.png"
+  },
+  {
+    "url": "https://vuejs.org/",
+    "name": "Vue.js",
+    "icon": "https://vuejs.org/images/icons/favicon-16x16.png"
+  },
+  {
+    "url": "https://reactjs.org/",
+    "name": "React"
+  },
+  {
+    "url": "https://angular.io/",
+    "name": "Angular",
+    "icon": "https://angular.io/assets/images/favicons/favicon.ico"
+  },
+  {
+    "url": "https://facebook.github.io/react-native",
+    "name": "React Native",
+    "icon": "https://reactnative.dev/img/favicon.ico"
+  },
+  {
+    "url": "https://flutter.dev",
+    "name": "Flutter",
+    "icon": "https://flutter.dev/images/favicon.png"
+  },
+  {
+    "url": "https://juejin.im/",
+    "name": "掘金"
+  },
+  {
+    "url": "https://www.v2ex.com",
+    "name": "V2EX"
+  },
+  {
+    "url": "https://news.ycombinator.com",
+    "name": "Hacker News"
+  },
+  {
+    "url": "https://www.udemy.com",
+    "name": "Udemy"
+  },
+  {
+    "url": "https://www.leetcode.com",
+    "name": "LeetCode"
+  },
+  {
+    "url": "https://time.geekbang.org",
+    "name": "极客时间",
+    "icon": "https://static001.geekbang.org/static/time/icon/favicon-16x16.jpg"
+  },
+  {
+    "url": "https://jsoneditoronline.org",
+    "name": "JSON Editor"
+  },
+  {
+    "url": "https://tinypng.com",
+    "name": "TinyPNG",
+    "icon": "https://tinypng.com/images/favicon.ico"
+  }
+]

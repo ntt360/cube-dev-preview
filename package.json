@@ -1,0 +1,38 @@
+{
+  "description": "cube 开发测试预览环境",
+  "author": "TTFE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ntt360/cube-dev-preview.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "scripts": {
+    "vite": "vite serve view",
+    "dev": "rm -rf dist && npx babel -w server -d dist",
+    "build": "npm run lint:js && rm -rf dist && npx babel server -d dist && vite build view",
+    "lint:js": "npx eslint --ext .js server/ --format codeframe",
+    "lint:js:fix": "npx eslint --fix --ext .js server/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@cubetool/base": "^2.0.3",
+    "@koa/router": "^10.0.0",
+    "dotenv": "^8.2.0",
+    "koa": "^2.13.1",
+    "koa-body": "^4.2.0",
+    "md5": "^2.3.0",
+    "unzipper": "^0.10.11",
+    "vue": "^3.0.5"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.10",
+    "@vue/compiler-sfc": "^3.0.5",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "prettier": "^2.2.1",
+    "vite": "^1.0.0-rc.8"
+  }
+}
