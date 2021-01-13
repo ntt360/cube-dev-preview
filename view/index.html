@@ -32,18 +32,21 @@
       const id = new URLSearchParams(window.location.search).get('id');
       fetch('/get_info?id=' + id).then(async (resp) => {
         const data = await resp.json();
-        console.log('cube data:', data);
-        /*
-        const { init, CoolBox } = CubeSdk;
-        let { systemData, cubeData: data } = CubeDevData;
 
-        systemData.userAgent += ' @cubetool/plugin-cli_plus';
+        let res = '';
+        if (Array.isArray(data.res) && data.res[0]) {
+          res = data.res[0];
+        }
+
+        const { init, CoolBox } = CubeSdk;
+
         init({
           debug: true,
-          ...systemData,
+          appid: 'cubetool',
         });
+
         const coolbox = new CoolBox({
-          data,
+          data: {...data, res: []},
           expanded: !!localStorage.getItem(`cube-${data.id}-expand`),
           onExpand: function () {
             localStorage.setItem(`cube-${data.id}-expand`, true);
@@ -52,10 +55,17 @@
             localStorage.removeItem(`cube-${data.id}-expand`);
           },
         });
+
         coolbox.insert('#cube-temp', 'top');
         coolbox.trigger('show');
         coolbox.trigger('completeshow');
-        */
+
+        if (res) {
+          const { origin } = location;
+          const script = document.createElement('script');
+          script.src = `${origin}/${res}`;
+          document.body.appendChild(script);
+        }
       });
     })();
   </script>
