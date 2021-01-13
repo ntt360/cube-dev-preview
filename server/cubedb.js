@@ -2,8 +2,10 @@ import { writeFileSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import md5 from 'md5';
 import { CODES, CubeError } from './error';
+import { utils } from '@cubetool/base';
 
 const DB_PATH = resolve(process.env.CUBE_DIST_PATH, '.db');
+utils.mkdir(DB_PATH);
 
 function getId(data) {
   let s = md5(JSON.stringify(data));
@@ -11,7 +13,7 @@ function getId(data) {
 }
 function check(id) {
   const saveTime = parseInt(id.slice(21), 16);
-  return new Date().getTime() - saveTime < 7 * 24 * 3600 * 1000;
+  return new Date().getTime() - saveTime < process.env.ID_EXPIRED * 1000;
 }
 
 export function get(id) {

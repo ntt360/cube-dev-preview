@@ -1,14 +1,25 @@
+/**
+ * cube 开发预览服务
+ */
+process.on('uncaughtException', (err, origin) => {
+  console.log('uncaughtException', err, origin);
+});
+
 import './env';
 import Koa from 'koa';
 import koaBody from 'koa-body';
 import Router from '@koa/router';
 import { resolve } from 'path';
 import { render, sendStatic } from './view';
-import { getPkgInfo, buildCube } from './builder';
+import { getPkgInfo, buildCube, installPlugins } from './builder';
 import { timeuuid } from './utils';
 
 const app = new Koa();
 const router = new Router();
+
+app.on('error', (err) => {
+  console.log(`server error:\n`, err);
+});
 
 app.use(
   koaBody({
@@ -76,3 +87,9 @@ router.get('/cubefile/:pkgid/:file', (ctx, next) => {
 
 app.use(router.routes()).use(router.allowedMethods());
 app.listen(process.env.PORT);
+console.log(`server start at: http://${process.env.HOST}:${process.env.PORT}`);
+
+if (process.env.CUBE_PLUGINS) {
+  const plugins = process.env.CUBE_PLUGINS.split(':');
+  installPlugins(plugins);
+}

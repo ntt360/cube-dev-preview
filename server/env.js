@@ -13,8 +13,10 @@ const defaultEnv = {
   PORT: '3601',
   VITE_PORT: '3602',
   UPLOAD_PATH: '/var/run/cube_dev_preview/upload',
+  CUBE_SPATH: '/var/run/cube_dev_preview',
   CUBE_COMPILER_PATH: '/var/run/cube_dev_preview/compiler',
   CUBE_DIST_PATH: '/var/run/cube_dev_preview/dist',
+  ID_EXPIRED: 604800,
 };
 
 for (let key in defaultEnv) {

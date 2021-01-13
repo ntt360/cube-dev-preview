@@ -1,8 +1,11 @@
 import 'dotenv/config';
 
+const host = process.env.HOST || 'localhost';
+const port = process.env.PORT || '3601';
+
 export default {
-  host: process.env.HOST || 'localhost',
-  port: process.env.VITE_PORT,
+  host: host,
+  port: process.env.VITE_PORT || '3602',
   outDir: '../dist/www/',
   assetsDir: 'static',
   optimizeDeps: {
@@ -23,7 +26,7 @@ export default {
     assetFileNames: `[name].[ext]`,
   },
   proxy: {
-    '/get_info': `http://localhost:${process.env.PORT}`,
-    '/cubefile': `http://localhost:${process.env.PORT}`,
+    '/get_info': `http://${host}:${port}`,
+    '/cubefile': `http://${host}:${port}`,
   },
 };

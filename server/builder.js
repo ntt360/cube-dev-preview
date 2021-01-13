@@ -5,7 +5,9 @@ import { resolve, parse, join } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import { save, get } from './cubedb';
 
-const { Project, ENV, log, plugin } = cubeTool('cube-dev-preview/v1', {});
+const { Project, ENV, log, plugin } = cubeTool('cube-dev-preview/v1', {
+  spath: process.env.CUBE_SPATH,
+});
 
 function genBuildEntryFile(path, pkgId) {
   let entryJsCode = `
@@ -79,7 +81,7 @@ class Compiler {
     const stats = await compiler.runOnce();
     console.log('\ncube compile stats:\n', stats.toString());
     if (stats.hasErrors()) {
-      throw new CubeError('cube compile error.', CODES.COMPILE_ERR);
+      throw new CubeError('cube compile error', CODES.COMPILE_ERR);
     }
     const { hash, assets } = stats.toJson();
     let splash = '',
@@ -159,6 +161,14 @@ export function getPkgInfo(id) {
 
 export function installPlugins(plugins) {
   plugins.forEach(async (name) => {
-    await plugin.install(name);
+    try {
+      console.log(`install cubetool plugin [${name}] ...`);
+      const p = await plugin.install(name);
+      const installRet = await p.promise();
+      plugin.load(name);
+      console.log(`cubetool plugin [${name}] installed\n`, installRet);
+    } catch (e) {
+      console.log(`cubetool plugin [${name}] install error\n`, e);
+    }
   });
 }
