@@ -75,4 +75,4 @@ router.get('/cubefile/:pkgid/:file', (ctx, next) => {
 });
 
 app.use(router.routes()).use(router.allowedMethods());
-app.listen(process.env.SERVER_PORT);
+app.listen(process.env.PORT);

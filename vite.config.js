@@ -23,7 +23,7 @@ export default {
     assetFileNames: `[name].[ext]`,
   },
   proxy: {
-    '/get_info': `http://localhost:${process.env.SERVER_PORT}`,
-    '/cubefile': `http://localhost:${process.env.SERVER_PORT}`,
+    '/get_info': `http://localhost:${process.env.PORT}`,
+    '/cubefile': `http://localhost:${process.env.PORT}`,
   },
 };
