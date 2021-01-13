@@ -115,7 +115,7 @@ class Compiler {
       ...data,
       pkg_id: pkgId,
       splash,
-      res: [res],
+      res,
       ...testdata,
     };
   }

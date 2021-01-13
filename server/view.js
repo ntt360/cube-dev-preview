@@ -11,7 +11,6 @@ export function sendStatic(ctx, file) {
     const path = ctx.path.replace('/', '') || indexFile;
     file = resolve(wwwRoot, path);
   }
-  console.log('file', file);
   if (!existsSync(file)) {
     ctx.throw(404);
   }
