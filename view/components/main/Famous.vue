@@ -12,7 +12,7 @@
 </template>
 <script>
 import { reactive } from 'vue';
-import FAMOUS from '../../data/famous.json';
+import FAMOUS from '../../data/Famous.json';
 export default {
   setup() {
     const famous = reactive(FAMOUS);
