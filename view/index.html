@@ -8,6 +8,7 @@
   <base target="_blank">
   <style>
     #tips {display: none; text-align: center; font-size: 18px; line-height: 1.5;}
+    .error-tips {text-align: center;margin:40px 0;color:#f60;font-size: 14px;}
   </style>
   <!--[if IE]>
     <style>
@@ -28,39 +29,71 @@
   <script src="https://s0.ssl.qhres.com/static/bfa8616e15c2af78.js#cubesdk.0.3.1"></script>
   <script type="module" src="/main.js"></script>
   <script>
-    (function() {
-      const id = new URLSearchParams(window.location.search).get('id');
-      fetch('/get_info?id=' + id).then(async (resp) => {
-        const data = await resp.json();
-        const res = data.res;
+    (async function() {
+      function renderCube(opts){
         const { init, CoolBox } = CubeSdk;
-
         init({
           debug: true,
         });
-
-        const coolbox = new CoolBox({
-          data: {...data, res: []},
-          expanded: !!localStorage.getItem(`cube-${data.id}-expand`),
-          onExpand: function () {
-            localStorage.setItem(`cube-${data.id}-expand`, true);
-          },
-          onCollapse: function () {
-            localStorage.removeItem(`cube-${data.id}-expand`);
-          },
-        });
-
+        const coolbox = new CoolBox(opts);
         coolbox.insert('#cube-temp', 'top');
         coolbox.trigger('show');
         coolbox.trigger('completeshow');
+      }
 
+      try {
+        const id = new URLSearchParams(window.location.search).get('id');
+        if(!/^\w{32}$/.test(id)){
+          throw new Error('请指定合法的预览 id。');
+        }
+        const resp = await fetch('/get_info?id=' + id);
+        if(!resp.ok){
+          throw new Error('获取 cube 信息失败：网络错误。');
+        }
+        const body = await resp.json();
+        if(!body || body.errno !== 0){
+          throw new Error(body.msg || '获取 cube 信息失败：服务器错误。');
+        }
+        const data = body.data;
+        const res = data.res;
+        const expandStorageKey = `cube-${data.id}-expand`;
+
+        renderCube({
+          data: {...data, res: []},
+          expanded: !!localStorage.getItem(expandStorageKey),
+          onExpand: function () {
+            localStorage.setItem(expandStorageKey, true);
+          },
+          onCollapse: function () {
+            localStorage.removeItem(expandStorageKey);
+          },
+        });
         if (res) {
           const { origin } = location;
           const script = document.createElement('script');
           script.src = `${origin}/${res}`;
           document.body.appendChild(script);
         }
-      });
+      } catch(e) {
+        console.log('error:', e);
+        renderCube({
+          data: {
+            name: '！错误',
+            id: 'error_tips',
+            pkg_id: 'error_tips',
+            splash: 'data:image/png;base64,',
+            disable_expand: 1,
+          },
+        });
+        addCube('error_tips', {
+          tpl: '<div class="error-tips">{{text}}</div>',
+          js: {
+            data: {
+              text: e.message || '发送错误，请重试。',
+            }
+          }
+        });
+      }
     })();
   </script>
 </body>

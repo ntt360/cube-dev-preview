@@ -18,13 +18,13 @@ function check(id) {
 
 export function get(id) {
   if (!check(id)) {
-    throw new CubeError('id expired', CODES.DATA_EXPIRED);
+    throw new CubeError('预览 id 已过期', CODES.DATA_EXPIRED);
   }
   try {
     return JSON.parse(readFileSync(resolve(DB_PATH, id), { encoding: 'utf8' }));
   } catch (e) {
     console.log('db get error:', e);
-    throw new CubeError('get cube data error', CODES.NO_DATA);
+    throw new CubeError('没有该 cube 的预览数据', CODES.NO_DATA);
   }
 }
 
@@ -35,6 +35,6 @@ export function save(data) {
     return id;
   } catch (e) {
     console.log('db save error:', e);
-    throw new CubeError('save cube data fail', CODES.SAVE_ERR);
+    throw new CubeError('存储 cube 信息失败', CODES.SAVE_ERR);
   }
 }

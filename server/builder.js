@@ -151,12 +151,16 @@ export async function buildCube(ctx) {
 /** 根据标识获取 cube pkg 信息 */
 export function getPkgInfo(id) {
   if (!id) {
-    throw new CubeError('id empty', CODES.EMPTY_ID);
+    throw new CubeError('预览 id 为空', CODES.EMPTY_ID);
   }
   if (id.length !== 32) {
-    throw new CubeError('illegal id', CODES.ILLEGAL_ID);
+    throw new CubeError('非法的预览 id', CODES.ILLEGAL_ID);
   }
-  return get(id);
+  const data = get(id);
+  return {
+    errno: 0,
+    data,
+  };
 }
 
 export function installPlugins(plugins) {
