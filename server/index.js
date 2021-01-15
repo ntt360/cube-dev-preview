@@ -44,8 +44,15 @@ router.get('/', async (ctx, next) => {
 /** 处理编译上传的 cube 包 */
 router.post('/upload', async (ctx, next) => {
   try {
-    const data = await buildCube(ctx);
-    ctx.body = data;
+    const id = await buildCube(ctx);
+    ctx.body = {
+      errno: 0,
+      data: {
+        id: id,
+        preview_url: `http://${process.env.HOST}:${process.env.PORT}?id=${id}`,
+      },
+      msg: 'Success',
+    };
   } catch (e) {
     ctx.body = {
       errno: e.code || -1,

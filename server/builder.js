@@ -140,12 +140,7 @@ export async function buildCube(ctx) {
   let data = await compiler.build();
   console.log('build result:', data);
   const id = save(data);
-  return {
-    errno: 0,
-    data: {
-      id: id,
-    },
-  };
+  return id;
 }
 
 /** 根据标识获取 cube pkg 信息 */

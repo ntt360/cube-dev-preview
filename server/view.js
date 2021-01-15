@@ -24,7 +24,7 @@ export function sendStatic(ctx, file) {
 /** 渲染页面 */
 export async function render(ctx) {
   if (process.env.MODE === 'dev') {
-    ctx.redirect(devServer);
+    ctx.redirect(devServer + ctx.url);
   } else {
     sendStatic(ctx);
   }
