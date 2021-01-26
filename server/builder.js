@@ -1,7 +1,7 @@
 import { CODES, CubeError } from './error';
 import cubeTool, { utils } from '@cubetool/base';
 import { unzip } from './utils';
-import { resolve, parse, join } from 'path';
+import { resolve, parse, join, sep } from 'path';
 import { readFileSync, writeFileSync } from 'fs';
 import { save, get } from './cubedb';
 
@@ -10,11 +10,12 @@ const { Project, ENV, log, plugin } = cubeTool('cube-dev-preview/v1', {
 });
 
 function genBuildEntryFile(path, pkgId) {
+  const mpath = path.split(sep).join('/');
   let entryJsCode = `
-    import css from '${path}/src/cube.css';
-    import js from '${path}/src/cube.js';
-    import tpl from '${path}/src/cube.tpl';
-    import api from '${path}/api.json';
+    import css from '${mpath}/src/cube.css';
+    import js from '${mpath}/src/cube.js';
+    import tpl from '${mpath}/src/cube.tpl';
+    import api from '${mpath}/api.json';
     addCube('${pkgId}', {tpl, js, api, css});
   `;
   return writeFileSync(resolve(path, 'index.js'), entryJsCode);
