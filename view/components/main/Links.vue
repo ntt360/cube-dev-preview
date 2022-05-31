@@ -24,6 +24,7 @@ export default {
 </script>
 <style scoped>
 #famous-section {
+  margin:10px 0;
   padding: 5px 4px;
   background: #fff;
   border: 1px #e1e4e7 solid;

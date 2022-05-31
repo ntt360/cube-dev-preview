@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>cube preview</title>
+  <title>dev@cube</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="https://s0.ssl.qhres.com/static/bd6570ac8aa30fdf.css#cubesdk.0.3.1">
+  <link rel="stylesheet" href="https://s0.ssl.qhres2.com/static/c83414da3e777247.css#cubesdk.2.0.0">
   <base target="_blank">
   <style>
     #tips {display: none; text-align: center; font-size: 18px; line-height: 1.5;}
@@ -25,76 +25,63 @@
   <div id="tips"> cube 开发者工具，暂不支持 IE 浏览器 <br> 推荐使用 Chrome 浏览器</div>
   <div id="doc">
   </div>
-  <div id="cube-temp"></div>
-  <script src="https://s0.ssl.qhres.com/static/bfa8616e15c2af78.js#cubesdk.0.3.1"></script>
+  <script src="https://s0.ssl.qhres2.com/static/20f52408d4ef209b.js#cubesdk.2.0.0"></script>
   <script type="module" src="/main.js"></script>
   <script>
-    (async function() {
-      function renderCube(opts){
-        const { init, CoolBox } = CubeSdk;
-        init({
-          debug: true,
-        });
-        const coolbox = new CoolBox(opts);
-        coolbox.insert('#cube-temp', 'top');
-        coolbox.trigger('show');
-        coolbox.trigger('completeshow');
+    function loadJs(res){
+      return new Promise((resolve, reject) => {
+        const { origin } = location;
+        const script = document.createElement('script');
+        script.src = `${origin}/${res}`;
+        document.body.appendChild(script);
+        script.onload = function(){
+          resolve()
+        }
+        script.onerror = function(){
+          reject()
+        }
+      })
+    }
+    async function getCubeInfo(){
+      const id = new URLSearchParams(window.location.search).get('id');
+      if(!/^\w{32}$/.test(id)){
+        throw new Error('请指定合法的预览 id。');
       }
-
-      try {
-        const id = new URLSearchParams(window.location.search).get('id');
-        if(!/^\w{32}$/.test(id)){
-          throw new Error('请指定合法的预览 id。');
-        }
-        const resp = await fetch('/get_info?id=' + id);
-        if(!resp.ok){
-          throw new Error('获取 cube 信息失败：网络错误。');
-        }
-        const body = await resp.json();
-        if(!body || body.errno !== 0){
-          throw new Error(body.msg || '获取 cube 信息失败：服务器错误。');
-        }
-        const data = body.data;
-        const res = data.res;
-        const expandStorageKey = `cube-${data.id}-expand`;
-
-        renderCube({
-          data: {...data, res: []},
-          expanded: !!localStorage.getItem(expandStorageKey),
-          onExpand: function () {
-            localStorage.setItem(expandStorageKey, true);
-          },
-          onCollapse: function () {
-            localStorage.removeItem(expandStorageKey);
-          },
-        });
-        if (res) {
-          const { origin } = location;
-          const script = document.createElement('script');
-          script.src = `${origin}/${res}`;
-          document.body.appendChild(script);
-        }
-      } catch(e) {
-        console.log('error:', e);
-        renderCube({
-          data: {
-            name: '！错误',
-            id: 'error_tips',
-            pkg_id: 'error_tips',
-            splash: 'data:image/png;base64,',
-            disable_expand: 1,
-          },
-        });
-        addCube('error_tips', {
-          tpl: '<div class="error-tips">{{text}}</div>',
-          js: {
-            data: {
-              text: e.message || '发送错误，请重试。',
-            }
-          }
-        });
+      const resp = await fetch('/get_info?id=' + id);
+      if(!resp.ok){
+        throw new Error('获取 cube 信息失败：网络错误。');
       }
-    })();
+      const body = await resp.json();
+      if(!body || body.errno !== 0){
+        throw new Error(body.msg || '获取 cube 信息失败：服务器错误。');
+      }
+      return body.data
+    }
+
+    async function renderCube (){
+      let data = await getCubeInfo()
+      const { init, Cool } = CubeSdk;
+      const sysData = {
+        cityCode: '101010100',
+        mp360Support: true,
+        webpSupport: {'lossy':true,'lossless':true,'alpha':true,'animation':true},
+        userAgent: 'CUBETOOL ' + navigator.userAgent,
+        where: 'dev_preview',
+        debug: true
+      };
+      init(sysData);
+      let res = data.res
+      delete data.res
+      let cool = new Cool({data});
+
+      if (res) {
+        await loadJs(res)
+      }
+      cool.insert('#cube-temp', 'top');
+      cool.trigger('show');
+      cool.trigger('completeshow');
+      return cool
+    }
   </script>
 </body>
 </html>

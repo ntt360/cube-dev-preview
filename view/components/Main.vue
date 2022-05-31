@@ -1,26 +1,18 @@
 <template>
 <div id="main">
-  <famous />
-  <div class="container">
-    <HaoCubes />
-    <CubeList />
-    <ArticalList />
-  </div>
+  <CubeView />
+  <Links />
 </div>
 </template>
 <script>
-import Famous from './main/Famous.vue'
-import HaoCubes from './main/HaoCubes.vue'
-import CubeList from './main/CubeList.vue'
-import ArticalList from './main/ArticalList.vue'
+import Links from './main/Links.vue'
+import CubeView from './cube/CubeView.vue'
 
 export default {
   name: 'Main',
   components: {
-    Famous,
-    HaoCubes,
-    CubeList,
-    ArticalList
+    Links,
+    CubeView,
   }
 }
 </script>
@@ -30,8 +22,8 @@ export default {
   background-color: #f3f4f7;
 }
 .container {
-  padding-top: 10px;
   display: flex;
   justify-content: space-between;
+  flex-direction: column;
 }
 </style>

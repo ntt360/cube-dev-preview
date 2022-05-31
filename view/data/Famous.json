@@ -26,8 +26,7 @@
   },
   {
     "url": "https://vuejs.org/",
-    "name": "Vue.js",
-    "icon": "https://vuejs.org/images/icons/favicon-16x16.png"
+    "name": "Vue.js"
   },
   {
     "url": "https://reactjs.org/",
@@ -45,8 +44,7 @@
   },
   {
     "url": "https://flutter.dev",
-    "name": "Flutter",
-    "icon": "https://flutter.dev/images/favicon.png"
+    "name": "Flutter"
   },
   {
     "url": "https://juejin.im/",
