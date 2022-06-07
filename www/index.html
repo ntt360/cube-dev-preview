@@ -6,8 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 添加预览组件css -->
   <link rel="stylesheet" href="https://s0.ssl.qhres2.com/static/8d72b25369122bfd.css">
-  <!-- 添加 sdk lib css -->
-  <link rel="stylesheet" href="https://s0.ssl.qhres2.com/static/c83414da3e777247.css#cubesdk.2.0.0">
   <base target="_blank">
   <style>
     #tips {display: none; text-align: center; font-size: 18px; line-height: 1.5;}
@@ -27,16 +25,19 @@
 <body>
   <div id="tips"> cube 开发者工具，暂不支持 IE 浏览器 <br> 推荐使用 Chrome 浏览器</div>
   <div id="cube-doc"></div>
-  <!-- 添加 sdk lib js -->
-  <script src="https://s0.ssl.qhres2.com/static/55425cdbf8bd7ef2.js#cubesdk.2.0.0"></script>
   <!-- 添加预览组件js -->
   <script type="module" src="https://s0.ssl.qhres2.com/static/b3a64a58cbb0a10e.js"></script>
   <script>
-    function loadJs(res){
+    /* 默认加载的sdk */
+    const defaultLibFiles = {
+      css: 'https://s0.ssl.qhres2.com/static/97d1eff2a72394b4.css#cubesdk.2.0.0',
+      js: 'https://s0.ssl.qhres2.com/static/631ff913b012c8de.js#cubesdk.2.0.0'
+    };
+
+    function loadJs(url){
       return new Promise((resolve, reject) => {
-        const { origin } = location;
         const script = document.createElement('script');
-        script.src = `${origin}/${res}`;
+        script.src = url;
         document.body.appendChild(script);
         script.onload = function(){
           resolve()
@@ -46,6 +47,51 @@
         }
       })
     }
+    function loadCss(url){
+      return new Promise((resolve, reject) => {
+        const style = document.createElement('link');
+        style.setAttribute('rel', 'stylesheet');
+        style.href = url;
+        document.head.appendChild(style);
+        style.onload = function(){
+          resolve()
+        }
+        style.onerror = function(){
+          reject()
+        }
+      })
+    }
+    /* load cube res 文件*/
+    function loadRes(res){
+      const { origin } = location;
+      return loadJs(`${origin}/${res}`);
+    }
+
+    /* 加载指定版本 sdk 到页面 */
+    function loadLib(version){
+      return new Promise((resolve, reject) => {
+        const cbName = 'cb' + Date.now();
+        window[cbName] = function(resp){
+          if(!resp || resp.errno !== 0){
+            reject('get version data error.');
+          } else {
+            const libFiles = resp?.data?.data[version];
+            if(libFiles){
+              resolve(libFiles);
+            } else {
+              resolve(defaultLibFiles);
+            }
+          }
+        }
+        loadJs(`https://api.dhrest.com/dataconfapi?uniqid=VSoIiRrYjDHFlHaX&callback=${cbName}`).catch(e => {
+          resolve(defaultLibFiles);
+        })
+      }).then(files => {
+        const {js, css} = files;
+        return Promise.all([loadJs(js), loadCss(css)]);
+      });
+    }
+
     async function getCubeInfo(){
       const id = new URLSearchParams(window.location.search).get('id');
       if(!/^\w{32}$/.test(id)){
@@ -64,6 +110,11 @@
 
     async function renderCube (selector){
       let data = await getCubeInfo()
+
+      /* 加载sdk */
+      await loadLib(data.lib_version)
+
+      /* 实例化 cube */
       const { init, Cool } = CubeSdk;
       const sysData = {
         cityCode: '101010100',

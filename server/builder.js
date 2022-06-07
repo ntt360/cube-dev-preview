@@ -51,6 +51,7 @@ class Compiler {
       idn: meta.idn || meta.id,
       miniapp_only: meta.miniapp_only ? 1 : 0,
       disable_expand: meta.disable_expand ? 1 : 0,
+      lib_version: meta.lib_version || '1.0.0',
     };
     /** 安装依赖 */
     const dependencies = this.project.cubePackageData.dependencies;
