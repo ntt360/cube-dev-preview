@@ -10,28 +10,26 @@
   <style>
     #tips {display: none; text-align: center; font-size: 18px; line-height: 1.5;}
     .error-tips {text-align: center;margin:40px 0;color:#f60;font-size: 14px;}
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      #tips{display: block}
+    }
   </style>
   <!--[if IE]>
     <style>
       #tips{display: block}
     </style>
   <![endif]-->
-  <style>
-    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-      #tips{display: block}
-    }
-  </style>
 </head>
 <body>
-  <div id="tips"> cube 开发者工具，暂不支持 IE 浏览器 <br> 推荐使用 Chrome 浏览器</div>
+  <div id="tips">暂不支持 IE 浏览器 <br> 推荐使用 Chrome 浏览器</div>
   <div id="cube-doc"></div>
   <!-- 添加预览组件js -->
   <script type="module" src="https://s0.ssl.qhres2.com/static/b3a64a58cbb0a10e.js"></script>
   <script>
     /* 默认加载的sdk */
     const defaultLibFiles = {
-      css: 'https://s0.ssl.qhres2.com/static/97d1eff2a72394b4.css#cubesdk.2.0.0',
-      js: 'https://s0.ssl.qhres2.com/static/631ff913b012c8de.js#cubesdk.2.0.0'
+      css: 'https://s0.ssl.qhres2.com/static/a9d4024a8f92746a.css#cubesdk.2.0.0',
+      js: 'https://s0.ssl.qhres2.com/static/5df9d068e78511c3.js#cubesdk.2.0.0'
     };
 
     function loadJs(url){
@@ -127,14 +125,22 @@
       init(sysData);
       let res = data.res
       delete data.res
-      let cool = new Cool({data});
+
+      const ctl = document.getElementById('wrap-width');
+      let cool = new Cool({data, width: ctl.value});
 
       if (res) {
         await loadJs(res)
       }
+
       cool.insert(selector, 'top');
       cool.trigger('show');
       cool.trigger('completeshow');
+
+      ctl.addEventListener('change', e => {
+        cool.trigger('resize', {width: ctl.value});
+      })
+
       return cool
     }
   </script>

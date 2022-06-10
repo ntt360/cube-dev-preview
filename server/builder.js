@@ -10,12 +10,14 @@ const { Project, ENV, log, plugin } = cubeTool('cube-dev-preview/v1', {
 });
 
 function genBuildEntryFile(path, pkgId) {
+  writeFileSync(`${path}/cube.wcss`, 'export default []');
   let entryJsCode = `
     import css from '${path}/src/cube.css';
     import js from '${path}/src/cube.js';
     import tpl from '${path}/src/cube.tpl';
     import api from '${path}/api.json';
-    addCube('${pkgId}', {tpl, js, api, css});
+    import wcss from '${path}/cube.wcss';
+    addCube('${pkgId}', {tpl, js, api, wcss});
   `;
   return writeFileSync(resolve(path, 'index.js'), entryJsCode);
 }
