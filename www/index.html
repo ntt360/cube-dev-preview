@@ -5,7 +5,7 @@
   <title>preview@cube</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- 添加预览组件css -->
-  <link rel="stylesheet" href="https://s0.ssl.qhres2.com/static/8d72b25369122bfd.css">
+  <link rel="stylesheet" href="https://s3.ssl.qhres2.com/static/d124ea73dcd83bac.css">
   <base target="_blank">
   <style>
     #tips {display: none; text-align: center; font-size: 18px; line-height: 1.5;}
@@ -24,7 +24,7 @@
   <div id="tips">暂不支持 IE 浏览器 <br> 推荐使用 Chrome 浏览器</div>
   <div id="cube-doc"></div>
   <!-- 添加预览组件js -->
-  <script type="module" src="https://s0.ssl.qhres2.com/static/b3a64a58cbb0a10e.js"></script>
+  <script type="module" src="https://s1.ssl.qhres2.com/static/1f9558ba053f9afc.js"></script>
   <script>
     /* 默认加载的sdk */
     const defaultLibFiles = {
@@ -65,33 +65,43 @@
       return loadJs(`${origin}/${res}`);
     }
 
-    /* 加载指定版本 sdk 到页面 */
-    function loadLib(version){
+    function jsonP(url, params={}, cb='callback'){
       return new Promise((resolve, reject) => {
         const cbName = 'cb' + Date.now();
         window[cbName] = function(resp){
-          if(!resp || resp.errno !== 0){
-            reject('get version data error.');
+          if(!resp){
+            reject('get data error.');
           } else {
-            const libFiles = resp?.data?.data[version];
-            if(libFiles){
-              resolve(libFiles);
-            } else {
-              resolve(defaultLibFiles);
-            }
+            resolve(resp)
           }
         }
-        loadJs(`https://api.dhrest.com/dataconfapi?uniqid=VSoIiRrYjDHFlHaX&callback=${cbName}`).catch(e => {
-          resolve(defaultLibFiles);
+        let jpurl = new URL(url);
+        let qs = new URLSearchParams(jpurl.search);
+        for(let key in params){
+          qs.set(key, params[key]);
+        }
+        qs.set(cb, cbName);
+        jpurl.search = '?' + qs.toString();
+        loadJs(jpurl.toString()).catch(e => {
+          reject(e);
         })
-      }).then(files => {
-        const {js, css} = files;
-        return Promise.all([loadJs(js), loadCss(css)]);
-      });
+      })
+    }
+    /* 加载指定版本 sdk 到页面 */
+    async function loadLib(version){
+      let files = defaultLibFiles;
+      try {
+        const resp = await jsonP(`https://api.dhrest.com/dataconfapi?uniqid=VSoIiRrYjDHFlHaX`);
+        if(resp.errno !== 0){
+          throw new Error(resp.msg || 'get date error');
+        }
+        const libFiles = resp?.data?.data[version];
+      } catch(e){}
+      return Promise.all([loadJs(files.js), loadCss(files.css)]);
     }
 
-    async function getCubeInfo(){
-      const id = new URLSearchParams(window.location.search).get('id');
+    /* 获取预览编译 cube 信息*/
+    async function getCubeInfoByID(id){
       if(!/^\w{32}$/.test(id)){
         throw new Error('请指定合法的预览 id。');
       }
@@ -106,13 +116,29 @@
       return body.data
     }
 
-    async function renderCube (selector){
-      let data = await getCubeInfo()
+    async function renderCube (selector, initWidth){
+      const searchParams = new URLSearchParams(window.location.search);
+      const id = searchParams.get('id');
+
+      let libVersion = searchParams.get('libv') || '2.0.0';
+      let resJs;
+      let data = {};
+      if(id){
+        /* 通过编译id获取 cube 信息 */
+        data = await getCubeInfoByID(id);
+        resJs = data.res;
+        delete data.res;
+      } else {
+        throw new Error('没有指定需要预览的条件');
+      }
+      if (!data || !data.id) {
+        throw new Error('处理 cube 预览信息出错，请检查参数');
+      }
 
       /* 加载sdk */
-      await loadLib(data.lib_version)
-
-      /* 实例化 cube */
+      libVersion = data.lib_version || libVersion;
+      await loadLib(libVersion)
+      /* 初始化 */
       const { init, Cool } = CubeSdk;
       const sysData = {
         cityCode: '101010100',
@@ -123,24 +149,17 @@
         debug: true
       };
       init(sysData);
-      let res = data.res
-      delete data.res
 
-      const ctl = document.getElementById('wrap-width');
-      let cool = new Cool({data, width: ctl.value});
+      /* 实例化 cube */
+      let cool = new Cool({data, width: initWidth});
 
-      if (res) {
-        await loadJs(res)
+      if (resJs) {
+        await loadJs(resJs)
       }
 
       cool.insert(selector, 'top');
       cool.trigger('show');
       cool.trigger('completeshow');
-
-      ctl.addEventListener('change', e => {
-        cool.trigger('resize', {width: ctl.value});
-      })
-
       return cool
     }
   </script>
