@@ -10,6 +10,7 @@
   <style>
     #tips {display: none; text-align: center; font-size: 18px; line-height: 1.5;}
     .error-tips {text-align: center;margin:40px 0;color:#f60;font-size: 14px;}
+    .cube-bd, .cube-bd .cube-card {height: 100%;}
     @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
       #tips{display: block}
     }
@@ -136,8 +137,8 @@
       }
 
       /* 加载sdk */
-      libVersion = data.lib_version || libVersion;
-      await loadLib(libVersion)
+      data.lib_version = data.lib_version || libVersion;
+      await loadLib(data.lib_version);
       /* 初始化 */
       const { init, Cool } = CubeSdk;
       const sysData = {
@@ -151,7 +152,14 @@
       init(sysData);
 
       /* 实例化 cube */
-      let cool = new Cool({data, width: initWidth});
+      let coolOpts = {data, width: initWidth};
+      const mVersion = parseInt(data.lib_version.split('.')[0], 10);
+      if(mVersion < 2){
+        coolOpts.width = 368;
+        coolOpts.height = 155;
+        coolOpts.expandHeight = 255;
+      }
+      let cool = new Cool(coolOpts);
 
       if (resJs) {
         await loadJs(resJs)

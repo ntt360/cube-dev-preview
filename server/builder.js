@@ -77,6 +77,7 @@ class Compiler {
         path: resolve(process.env.CUBE_DIST_PATH, pkgId),
         publicPath,
       },
+      wcssWait: 1000,
     });
     compiler._genEntryFile = () => {
       genBuildEntryFile(cubePath, pkgId);
